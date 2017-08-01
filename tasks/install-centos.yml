@@ -1,0 +1,37 @@
+---
+- name: Check if docker is already installed.
+  stat: path=/etc/docker
+  register: dockerInstallationStatus
+
+- name: purge old docker packages
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - docker
+    - docker-common
+    - container-selinux
+    - docker-selinux
+    - docker-engine
+  when: dockerInstallationStatus.stat.exists == false
+
+# copying repo file
+- template:
+    src: docker1.11.2.repo.j2
+    dest: /etc/yum.repos.d/docker_1.11.2.repo
+    mode: 0644
+
+# Installing docker engine
+- name: install docker-engine
+  yum:
+    name: docker-engine-1.11.2
+    update_cache: yes
+  notify:
+    - Restart docker-engine
+  when: dockerInstallationStatus.stat.exists == false
+
+- name: create docker config dir
+  file:
+    path: /etc/docker
+    state: directory
+  when: dockerInstallationStatus.stat.exists == false

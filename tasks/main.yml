@@ -1,0 +1,13 @@
+---
+# tasks file for osm_dockerEngine
+
+- name: install docker ce with yum
+  include: install-centos.yml
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "7"
+
+- name: start docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+  when: ansible_virtualization_type != "docker" # don't start docker in docker

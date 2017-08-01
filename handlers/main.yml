@@ -1,0 +1,5 @@
+---
+# handlers file for osm_dockerEngine
+
+- name: Restart docker-engine
+  service: name=docker state=restarted

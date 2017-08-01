@@ -1,0 +1,6 @@
+---
+- hosts: default
+  roles:
+    - { role: "osm_dockerEngine" }
+  remote_user: root 
+
